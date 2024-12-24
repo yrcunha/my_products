@@ -1,0 +1,9 @@
+{
+  "plugins": [
+    "no-secrets"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "prettier"
+  ]
+}
