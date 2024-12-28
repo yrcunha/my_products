@@ -69,11 +69,11 @@
   "lint-staged": {
     "*.{j,t}{s,sx}": [
       "npx prettier --check",
-      "eslint --file"
+      "eslint"
     ],
     "*.{c,m}js": [
       "npx prettier --check",
-      "eslint --file"
+      "eslint"
     ],
     "*.{json,css,html}": [
       "npx prettier --check"
