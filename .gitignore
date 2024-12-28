@@ -131,3 +131,4 @@ dist
 
 # IDE`s
 .idea
+.tool-versions
