@@ -1,0 +1,23 @@
+name: Linting
+
+on: pull_request
+
+jobs:
+  checkout:
+    name: Checkout
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4.1.0
+        with:
+          node-version: "lts/iron"
+      - name: NPM CI
+        run: npm ci
+      - name: Prettier
+        run: npm run lint:prettier:check
+      - name: Eslint
+        run: npm run lint:eslint:check
+      - name: Commitlint
+        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
