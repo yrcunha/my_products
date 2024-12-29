@@ -1,11 +1,31 @@
 import pg from "pg";
 import CircuitBreaker from "opossum";
 
+/**
+ * Códigos de erro do PostgresSQL para violação de integridade e regras de negócio.
+ *
+ * @see https://www.postgresql.org/docs/current/errcodes-appendix.html
+ */
+export const PG_ERROR_CODES = [
+  "23505", // Violação de chave única
+  "23503", // Violação de chave estrangeira
+  "23502", // Violação de NOT NULL
+  "23514", // Violação de CHECK constraint
+  "23511", // Violação de EXCLUSION constraint
+  "22003", // Violação de limite numérico
+  "22012", // Divisão por zero
+  "2201X", // Erros de data/hora
+  "22008", // Formato de data/hora estão inválidos
+  "22005", // Erro de conversão de tipo
+  "23000", // Violação de integridade de dados
+];
+
 const CIRCUIT_BREAKER_OPTIONS = {
-  allowWarmUp: process.env.CIRCUIT_BREAKER_ALLOW_WARM_UP_FROM_DATABASE === "true",
+  volumeThreshold: Number(process.env.CIRCUIT_BREAKER_VOLUME_THRESHOLD),
   timeout: Number(process.env.CIRCUIT_BREAKER_TIMEOUT_FROM_DATABASE),
   errorThresholdPercentage: Number(process.env.CIRCUIT_BREAKER_THRESHOLD_PERCENTAGE_FROM_DATABASE),
   resetTimeout: Number(process.env.CIRCUIT_BREAKER_RESET_TIMEOUT_FROM_DATABASE),
+  errorFilter: (error: pg.DatabaseError) => !!(error?.code && PG_ERROR_CODES.includes(error.code)),
 } as const;
 
 async function getClient() {
