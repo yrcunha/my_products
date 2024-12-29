@@ -1,41 +1,38 @@
 import "express-async-errors";
 
-import express, { NextFunction, Request, Response } from "express";
-import { query } from "@/features/services/datasource/database.js";
-import { CustomError, ErrorCodes } from "@/shared/errors/custom-errors";
-import { HttpCodes, MapErrors } from "@/shared/http/http";
-import { MethodNotAllowedError } from "@/shared/errors/method-not-allowed.error";
+import express from "express";
+import { databaseCircuitBreaker } from "@/features/providers/database.js";
+import { rateLimit } from "express-rate-limit";
+import helmet from "helmet";
+import { healthRouter } from "@/api/v1/health.router";
+import { errorHandler, loggingHandler, methodNotAllowed } from "@/api/interceptors/handlers";
+import logger from "@/shared/logger/logger";
 
-const app = express();
+(() => {
+  const app = express();
 
-app.get("/api/v1/health", async (_req: Request, res: Response) => {
-  const now = new Date().toISOString();
-  const result = await query(
-    "SELECT current_setting('max_connections')::int AS max_connections, current_setting('server_version') AS version, COUNT(*)::int AS opened_connections FROM pg_stat_activity WHERE datname = $1;",
-    [process.env.POSTGRES_DB!],
-  );
-  res.status(HttpCodes.OK).json({
-    updated_at: now,
-    dependencies: {
-      database: {
-        max_connections: result?.rows[0].max_connections,
-        opened_connections: result?.rows[0].opened_connections,
-        version: result?.rows[0].version,
-      },
-    },
-  });
-});
+  app
+    .use(express.json())
+    .use(express.urlencoded({ extended: true }))
+    .use(
+      rateLimit({
+        windowMs: Number(process.env.RATE_LIMIT_TIMEOUT),
+        limit: Number(process.env.MS_WINDOW_FOR_RATE_LIMIT),
+        legacyHeaders: false,
+      }),
+    )
+    .use(helmet())
+    .use(loggingHandler)
+    .use(healthRouter())
+    .all("*", methodNotAllowed)
+    .use(errorHandler);
 
-app.all("*", (req: Request, res: Response) => {
-  res
-    .status(MapErrors[ErrorCodes.MethodNotAllowed])
-    .json(new MethodNotAllowedError(`${req.method} method to path -- ${req.url} -- is not allowed!`));
-});
+  databaseCircuitBreaker
+    .on("close", () => logger.info("The circuit breaker for the database is closed."))
+    .on("open", () => logger.info("The circuit breaker for the database has been opened."))
+    .on("halfOpen", (resetTimeout: number) =>
+      logger.info(`The database circuit breaker was half opened after ${resetTimeout}ms elapsed`),
+    );
 
-app.use((error: Error, _req: Request, res: Response, _next: NextFunction) => {
-  const response = CustomError.instanceMount(error);
-  res.status(MapErrors[response.name]).json(response);
-});
-
-app.listen(3000);
-console.log("Listening on port 3000");
+  app.listen(3000, () => logger.info("Listening on port 3000"));
+})();
