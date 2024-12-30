@@ -10,12 +10,12 @@ export function methodNotAllowed(req: Request, res: Response) {
     response,
     `Error for call made to url [${req.url}] method [${req.method.toUpperCase()}] is invalid as the method does not exist.`,
   );
-  res.status(MapErrors[ErrorCodes.MethodNotAllowed]).json();
+  res.status(MapErrors[ErrorCodes.MethodNotAllowed]).json(response);
 }
 
 export function errorHandler(error: Error, req: Request, res: Response, _next: NextFunction) {
   const response = CustomError.instanceMount(error);
-  logger.info(response, `Error for call made to url [${req.url}] method [${req.method.toUpperCase()}].`);
+  logger.error(response, `Error for call made to url [${req.url}] method [${req.method.toUpperCase()}].`);
   res.status(MapErrors[response.name]).json(response);
 }
 
