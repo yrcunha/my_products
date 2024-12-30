@@ -6,14 +6,19 @@ import { rateLimit } from "express-rate-limit";
 import helmet from "helmet";
 import { healthRouter } from "@/api/v1/health.router";
 import { errorHandler, loggingHandler, methodNotAllowed } from "@/api/interceptors/handlers";
+import { clientRouter } from "@/api/v1/client.router";
+import { loadEnv } from "@/features/models/config";
 import logger from "@/shared/logger/logger";
 
 (() => {
+  loadEnv(process.env);
+
   const app = express();
 
   app
     .use(express.json())
     .use(express.urlencoded({ extended: true }))
+    .use(helmet())
     .use(
       rateLimit({
         windowMs: Number(process.env.RATE_LIMIT_TIMEOUT),
@@ -21,9 +26,9 @@ import logger from "@/shared/logger/logger";
         legacyHeaders: false,
       }),
     )
-    .use(helmet())
     .use(loggingHandler)
     .use(healthRouter())
+    .use(clientRouter())
     .all("*", methodNotAllowed)
     .use(errorHandler);
 
