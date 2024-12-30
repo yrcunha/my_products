@@ -13,7 +13,7 @@
     "start:dev": "dotenv -e .env.development -- tsx watch src/index.ts",
     "dev": "node __infrastructure__/provisioning/development/start-web-service.mjs",
     "pretest": "npm run services:up",
-    "test": "dotenv -e .env.development -- concurrently --n app,jest --hide app --k --success command-jest \"npm run start:dev\" \"jest --runInBand --verbose\"",
+    "test": "dotenv -e .env.development -- concurrently --n app,jest --hide app --k --success command-jest \"npm run dev\" \"jest --runInBand --verbose\"",
     "posttest": "npm run services:stop",
     "test:watch": "jest --watch --verbose",
     "services:up": "docker compose -f __infrastructure__/provisioning/development/docker-compose.yaml up -d",
