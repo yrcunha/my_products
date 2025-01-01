@@ -4,6 +4,7 @@ import { faker } from "@faker-js/faker";
 import { ulid } from "ulid";
 import { ProductProps } from "../src/features/models/products";
 import { ClientProps } from "../src/features/models/client";
+import { ReviewProps } from "../src/features/models/review";
 
 export const BaseUrl = "http://localhost:3000/api";
 
@@ -44,4 +45,11 @@ export async function insertProductForTesting(clientId: ClientProps["id"], data:
     clientId,
     true,
   ]);
+}
+
+export async function insertProductReviewForTesting(productId: ProductProps["id"], data: ReviewProps) {
+  await query(
+    "INSERT INTO products_review (product_id, score, message, reviewer) VALUES ($1, $2, $3, $4) RETURNING 1;",
+    [productId, data.score, data.message, data.reviewer],
+  );
 }
