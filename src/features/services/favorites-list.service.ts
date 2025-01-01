@@ -41,23 +41,29 @@ export async function changeItem(
 export async function getItemById(clientId: FavoriteProps["clientId"], productId: FavoriteProps["productId"]) {
   const result = await query(
     `
-      SELECT products.id,
-             products.price,
-             products.image,
-             products.brand,
-             products.title,
-             products.review_score
-      FROM products
-             INNER JOIN favorite_products ON products.id = favorite_products.product_id
-      WHERE favorite_products.client_id = $1
-        AND favorite_products.product_id = $2;
+        SELECT products.id,
+               products.price,
+               products.image,
+               products.title,
+               COALESCE(
+                       (SELECT JSON_AGG(reviews)
+                        FROM (SELECT message, score, created_at
+                              FROM products_review
+                              WHERE products_review.product_id = products.id
+                              ORDER BY created_at DESC
+                              LIMIT 3) AS reviews),
+                       '[]'::json
+               ) AS reviews
+        FROM products
+                 INNER JOIN favorite_products ON products.id = favorite_products.product_id
+        WHERE favorite_products.client_id = $1
+          AND favorite_products.product_id = $2;
     `,
     [clientId, productId],
   );
   const product = result.rows.map((item) => ({
     ...item,
     price: Number(item.price),
-    review_score: Number(item.review_score),
   }))[0];
   return result.rows.length ? product : null;
 }
@@ -68,12 +74,10 @@ export async function getAllItems(clientId: FavoriteProps["clientId"], { page, l
      SELECT products.id,
             products.price,
             products.image,
-            products.brand,
             products.title,
-            products.review_score,
             (SELECT count::int FROM Total) AS total
      FROM products
-            INNER JOIN favorite_products ON products.id = favorite_products.product_id
+              INNER JOIN favorite_products ON products.id = favorite_products.product_id
      WHERE favorite_products.client_id = $1
      LIMIT $2 OFFSET $3;`,
     [clientId, limit, (page - 1) * limit],
@@ -84,7 +88,6 @@ export async function getAllItems(clientId: FavoriteProps["clientId"], { page, l
   const data = result.rows.map(({ total: _, ...item }) => ({
     ...item,
     price: Number(item.price),
-    review_score: Number(item.review_score),
   }));
   return { page, limit, total, data };
 }
