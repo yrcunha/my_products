@@ -2,6 +2,8 @@ import retry from "async-retry";
 import { query } from "../src/features/providers/database";
 import { faker } from "@faker-js/faker";
 import { ulid } from "ulid";
+import { ProductProps } from "../src/features/models/products";
+import { ClientProps } from "../src/features/models/client";
 
 export const BaseUrl = "http://localhost:3000/api";
 
@@ -28,4 +30,18 @@ export async function insertClientForTesting() {
     props.email,
   ]);
   return result.rows[0];
+}
+
+export async function insertProductForTesting(clientId: ClientProps["id"], data: Omit<ProductProps, "state">) {
+  await query("SELECT insert_product_and_favorite($1, $2, $3, $4, $5, $6, $7, $8, $9);", [
+    data.id,
+    data.price,
+    data.image,
+    data.brand,
+    data.title,
+    data.reviewScore,
+    "available",
+    clientId,
+    true,
+  ]);
 }
