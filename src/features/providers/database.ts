@@ -34,7 +34,7 @@ export const PG_ERROR_CODES = [
 ];
 
 const CIRCUIT_BREAKER_OPTIONS = {
-  volumeThreshold: Number(process.env.CIRCUIT_BREAKER_VOLUME_THRESHOLD),
+  volumeThreshold: Number(process.env.CIRCUIT_BREAKER_VOLUME_THRESHOLD_FROM_DATABASE),
   timeout: Number(process.env.CIRCUIT_BREAKER_TIMEOUT_FROM_DATABASE),
   errorThresholdPercentage: Number(process.env.CIRCUIT_BREAKER_THRESHOLD_PERCENTAGE_FROM_DATABASE),
   resetTimeout: Number(process.env.CIRCUIT_BREAKER_RESET_TIMEOUT_FROM_DATABASE),
@@ -73,5 +73,5 @@ export const databaseCircuitBreaker = new CircuitBreaker(async function (command
 }, CIRCUIT_BREAKER_OPTIONS);
 
 export async function query(command: string, params: unknown[] = []) {
-  return await databaseCircuitBreaker.fire(command, params);
+  return databaseCircuitBreaker.fire(command, params);
 }
