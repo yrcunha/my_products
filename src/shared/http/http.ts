@@ -23,6 +23,9 @@ export const MapErrors = {
   [ErrorCodes.MethodNotAllowed.valueOf()]: HttpCodes.MethodNotAllowed,
   [ErrorCodes.ResourceAlreadyExists.valueOf()]: HttpCodes.Conflict,
   [ErrorCodes.InvalidDatabaseTransactionData.valueOf()]: HttpCodes.UnprocessableEntity,
+  [ErrorCodes.InvalidCall.valueOf()]: HttpCodes.UnprocessableEntity,
   [ErrorCodes.Unknown.valueOf()]: HttpCodes.InternalServerError,
   [ErrorCodes.ServiceUnavailable.valueOf()]: HttpCodes.ServiceUnavailable,
+  [ErrorCodes.ProblemsOnTheCallServer.valueOf()]: HttpCodes.ServiceUnavailable,
+  [ErrorCodes.InvalidCallContract.valueOf()]: HttpCodes.ServiceUnavailable,
 } as const;

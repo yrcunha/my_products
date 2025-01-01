@@ -11,7 +11,7 @@ beforeAll(async () => {
   client = await insertClientForTesting();
 });
 
-describe("POST /api/v1/clients", () => {
+describe("GET /api/v1/clients", () => {
   describe("Anonymous user", () => {
     describe("Retrieving client", () => {
       test("For the first time successfully", async () => {

@@ -2,7 +2,7 @@ import { databaseCircuitBreaker, query } from "../../../src/features/providers/d
 
 describe("Circuit breaker for database", () => {
   const invalidCommand = "SELECT * FROM non_existing_table";
-  const attempts = Number(process.env.CIRCUIT_BREAKER_VOLUME_THRESHOLD);
+  const attempts = Number(process.env.CIRCUIT_BREAKER_VOLUME_THRESHOLD_FROM_DATABASE);
 
   test("Circuit breaker closed when it did not reach the volume threshold", async () => {
     await Promise.allSettled(Array.from({ length: attempts - 1 }).map(() => query(invalidCommand)));
