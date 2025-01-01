@@ -31,7 +31,23 @@ async function runWebService() {
 
   console.log("\n🟢 Services started successfully!");
   console.log("🟢 Starting WEB service...\n");
-  spawn("npm", ["run", "start:dev"], { stdio: "inherit" }).on("error", handleExit);
+  spawn(
+    "concurrently",
+    [
+      "--n",
+      "app,product",
+      "--hide",
+      "product",
+      "--k",
+      "--success",
+      "command-product",
+      '"npm run start:dev"',
+      '"npx json-server --watch __infrastructure__/provisioning/development/product-server.json --port 3001"',
+    ],
+    {
+      stdio: "inherit",
+    },
+  ).on("error", handleExit);
 }
 
 (async () => {

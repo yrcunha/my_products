@@ -1,0 +1,52 @@
+{
+  "product": [
+    {
+      "id": "01JGHESJEKBX468E93W00NRD9M",
+      "price": 100.23,
+      "image": "https://meu-bucket.s3.us-east-1.amazonaws.com/01JGHESJEKBX468E93W00NRD9M.txt",
+      "brand": "",
+      "title": "",
+      "reviewScore": 3.98
+    },
+    {
+      "id": "01JGHETDCDP8YES8RR564PBK46",
+      "price": 100.23,
+      "image": "https://meu-bucket.s3.us-east-1.amazonaws.com/01JGHETDCDP8YES8RR564PBK46.txt",
+      "brand": "",
+      "title": "",
+      "reviewScore": 3.98
+    },
+    {
+      "id": "01JGHETJZHQQSXGYXDWR1Q5541",
+      "price": 100.23,
+      "image": "https://meu-bucket.s3.us-east-1.amazonaws.com/01JGHETJZHQQSXGYXDWR1Q5541.txt",
+      "brand": "",
+      "title": "",
+      "reviewScore": 3.98
+    },
+    {
+      "id": "01JGHETQS7R99WH89NM8ZPARGS",
+      "price": 100.23,
+      "image": "https://meu-bucket.s3.us-east-1.amazonaws.com/01JGHETQS7R99WH89NM8ZPARGS.txt",
+      "brand": "",
+      "title": "",
+      "reviewScore": 3.98
+    },
+    {
+      "id": "01JGHETYW845M1V0YYXT3WHMAW",
+      "price": 100.23,
+      "image": "https://meu-bucket.s3.us-east-1.amazonaws.com/01JGHETYW845M1V0YYXT3WHMAW.txt",
+      "brand": "",
+      "title": "",
+      "reviewScore": 3.98
+    },
+    {
+      "id": "01JGHJDXB4G69ZDQ23B8A1MYJT",
+      "price": 0,
+      "image": "",
+      "brand": "",
+      "title": "",
+      "reviewScore": 0
+    }
+  ]
+}
