@@ -8,30 +8,39 @@ export enum ErrorCodes {
   Unauthorized = "Unauthorized",
   ActionNotAllowed = "ActionNotAllowed",
   InvalidDatabaseTransactionData = "InvalidDatabaseTransactionData",
+  ProblemsOnTheCallServer = "ProblemsOnTheCallServer",
+  InvalidCall = "InvalidCall",
+  InvalidCallContract = "InvalidCallContract",
 }
 
-export type ErrorDetails = {
-  key: string;
+export type ValidationErrorDetails = {
+  field: string;
   message: string;
 };
 
 export class CustomError extends Error {
   public timestamp: string;
-  public details?: ErrorDetails[];
+  public details?: ValidationErrorDetails[];
+  public rawErrors?: Error | Error[];
 
-  constructor(message: string, code: ErrorCodes = ErrorCodes.Unknown, details?: ErrorDetails[]) {
+  constructor(
+    message: string,
+    code: ErrorCodes = ErrorCodes.Unknown,
+    details?: ValidationErrorDetails[],
+    rawErrors?: Error | Error[],
+  ) {
     super();
     super.name = code;
     super.message = message;
     this.details = details;
+    this.rawErrors = rawErrors;
     this.timestamp = new Date().toISOString();
   }
 
   static instanceMount(error: Error) {
     if (error instanceof CustomError) return error;
     if ("errors" in error && Array.isArray(error.errors)) {
-      const details = error.errors.map<ErrorDetails>((item) => ({ key: "", message: item.message }));
-      return new CustomError("Unexpected error with no message pattern.", ErrorCodes.Unknown, details);
+      return new CustomError("Unexpected error with no message pattern.", ErrorCodes.Unknown, undefined, error.errors);
     }
     return new CustomError(error.message);
   }
