@@ -31,9 +31,12 @@ describe("GET /api/v1/clients/{id}/favorite_products/{product_id}", () => {
         const response = await fetch(`${BaseUrl}/v1/clients/${clientId}/favorite_products/${productId}`);
         expect(response.status).toBe(HttpCodes.OK);
         const responseJson = await response.json();
-        const { reviewScore: _, ...expected } = {
-          ...data.product[0],
-          review_score: data.product[0].reviewScore,
+        const expected = {
+          id: data.product[0].id,
+          price: data.product[0].price,
+          title: data.product[0].title,
+          image: data.product[0].image,
+          reviews: [],
         };
         expect(responseJson).toEqual(expected);
       });
@@ -50,9 +53,11 @@ describe("GET /api/v1/clients/{id}/favorite_products/{product_id}", () => {
         expect(response.status).toBe(HttpCodes.OK);
         const responseJson = await response.json();
         expect(Array.isArray(responseJson.data)).toBeTruthy();
-        const { reviewScore: _, ...expected } = {
-          ...data.product[0],
-          review_score: data.product[0].reviewScore,
+        const expected = {
+          id: data.product[0].id,
+          price: data.product[0].price,
+          title: data.product[0].title,
+          image: data.product[0].image,
         };
         expect(responseJson).toEqual({
           page: 1,

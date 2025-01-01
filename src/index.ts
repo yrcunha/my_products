@@ -11,6 +11,7 @@ import { loadEnv } from "@/features/models/config";
 import logger from "@/shared/logger/logger";
 import { requestCircuitBreaker } from "@/features/providers/request";
 import { favoritesListRouter } from "@/api/v1/favorites-list.router";
+import { productReviewRouter } from "@/api/v1/product-review.router";
 
 (() => {
   loadEnv(process.env);
@@ -32,6 +33,7 @@ import { favoritesListRouter } from "@/api/v1/favorites-list.router";
     .use(healthRouter())
     .use(clientRouter())
     .use(favoritesListRouter())
+    .use(productReviewRouter())
     .all("*", methodNotAllowed)
     .use(errorHandler);
 
