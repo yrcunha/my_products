@@ -7,21 +7,28 @@ const isPositiveInteger = (value: string) => {
   return Number.isSafeInteger(coercedValue) && coercedValue > 0;
 };
 
-export const ConfigModel = z.object({
-  POSTGRES_HOST: z.string(),
-  POSTGRES_PORT: z.string().refine(isPositiveInteger),
-  POSTGRES_USER: z.string(),
-  POSTGRES_PASSWORD: z.string(),
-  POSTGRES_DB: z.string(),
-  DATABASE_URL: z.string().url(),
-  RATE_LIMIT_TIMEOUT: z.string().refine(isPositiveInteger),
-  MS_WINDOW_FOR_RATE_LIMIT: z.string().refine(isPositiveInteger),
-  CIRCUIT_BREAKER_VOLUME_THRESHOLD: z.string().refine(isPositiveInteger),
-  CIRCUIT_BREAKER_TIMEOUT_FROM_DATABASE: z.string().refine(isPositiveInteger),
-  CIRCUIT_BREAKER_THRESHOLD_PERCENTAGE_FROM_DATABASE: z.string().refine(isPositiveInteger),
-  CIRCUIT_BREAKER_RESET_TIMEOUT_FROM_DATABASE: z.string().refine(isPositiveInteger),
-  LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]),
-});
+export const ConfigModel = z
+  .object({
+    POSTGRES_HOST: z.string(),
+    POSTGRES_PORT: z.string().refine(isPositiveInteger),
+    POSTGRES_USER: z.string(),
+    POSTGRES_PASSWORD: z.string(),
+    POSTGRES_DB: z.string(),
+    DATABASE_URL: z.string().url(),
+    RATE_LIMIT_TIMEOUT: z.string().refine(isPositiveInteger),
+    MS_WINDOW_FOR_RATE_LIMIT: z.string().refine(isPositiveInteger),
+    CIRCUIT_BREAKER_VOLUME_THRESHOLD_FROM_DATABASE: z.string().refine(isPositiveInteger),
+    CIRCUIT_BREAKER_TIMEOUT_FROM_DATABASE: z.string().refine(isPositiveInteger),
+    CIRCUIT_BREAKER_THRESHOLD_PERCENTAGE_FROM_DATABASE: z.string().refine(isPositiveInteger),
+    CIRCUIT_BREAKER_RESET_TIMEOUT_FROM_DATABASE: z.string().refine(isPositiveInteger),
+    CIRCUIT_BREAKER_VOLUME_THRESHOLD_FOR_CALLING: z.string().refine(isPositiveInteger),
+    CIRCUIT_BREAKER_TIMEOUT_FOR_CALLING: z.string().refine(isPositiveInteger),
+    CIRCUIT_BREAKER_THRESHOLD_PERCENTAGE_FOR_CALLING: z.string().refine(isPositiveInteger),
+    CIRCUIT_BREAKER_RESET_TIMEOUT_FOR_CALLING: z.string().refine(isPositiveInteger),
+    LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]),
+    PRODUCT_API_BASE_URL: z.string().url(),
+  })
+  .strip();
 
 export function loadEnv(env: NodeJS.ProcessEnv) {
   const model = ConfigModel.safeParse(env);
