@@ -27,6 +27,10 @@ export const ConfigModel = z
     CIRCUIT_BREAKER_RESET_TIMEOUT_FOR_CALLING: z.string().refine(isPositiveInteger),
     LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]),
     PRODUCT_API_BASE_URL: z.string().url(),
+    JWT_SECRET: z.string(),
+    JWT_EXPIRATION: z.string(),
+    JWT_REFRESH_SECRET: z.string(),
+    JWT_EXPIRATION_TO_REFRESH: z.string(),
   })
   .strip();
 
@@ -35,6 +39,10 @@ export function loadEnv(env: NodeJS.ProcessEnv) {
   if (!model.success) {
     logger.fatal(mapZodErrorDetails(model.error.issues), "Error validating environment.");
     process.exit(1);
+  }
+  if (process.env.NODE_ENV === "test") {
+    model.data.JWT_EXPIRATION = "1s";
+    model.data.JWT_EXPIRATION_TO_REFRESH = "1s";
   }
   process.env = model.data;
 }
