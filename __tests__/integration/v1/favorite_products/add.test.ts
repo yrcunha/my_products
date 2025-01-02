@@ -1,9 +1,21 @@
-import { BaseUrl, clearTableInDatabase, insertClientForTesting, waitForAllServices } from "../../../orchestrator";
+import {
+  BaseUrl,
+  clearTableInDatabase,
+  insertClientForTesting,
+  logIn,
+  waitForAllServices,
+} from "../../../orchestrator";
 import { HttpCodes } from "../../../../src/shared/http/http";
 import { ErrorCodes } from "../../../../src/shared/errors/custom-errors";
 import data from "../../../../__infrastructure__/provisioning/development/product-server.json";
 import { randomUUID } from "node:crypto";
+import { TokenProps } from "../../../../src/features/models/user";
 
+let accessToken: TokenProps["access_token"];
+const headersOptions = (token: TokenProps["access_token"]) => ({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${token}`,
+});
 let clientId: string;
 
 beforeAll(async () => {
@@ -13,18 +25,20 @@ beforeAll(async () => {
     clearTableInDatabase("products"),
     clearTableInDatabase("favorite_products"),
   ]);
-  clientId = (await insertClientForTesting()).id;
+  const [client, token] = await Promise.all([insertClientForTesting(), logIn()]);
+  clientId = client.id;
+  accessToken = token.access_token;
 });
 
 describe("POST /api/v1/clients/{id}/favorite_products", () => {
-  describe("Anonymous user", () => {
+  describe("Authenticated user", () => {
     describe("Add product in list", () => {
       const payload = { product_id: data.product[0].id };
 
       test("For the first time successfully", async () => {
         const response = await fetch(`${BaseUrl}/v1/clients/${clientId}/favorite_products`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: headersOptions(accessToken),
           body: JSON.stringify(payload),
         });
         expect(response.status).toBe(HttpCodes.NotContent);
@@ -33,7 +47,7 @@ describe("POST /api/v1/clients/{id}/favorite_products", () => {
       test("For the second time with a non-existent client", async () => {
         const response = await fetch(`${BaseUrl}/v1/clients/${randomUUID()}/favorite_products`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: headersOptions(accessToken),
           body: JSON.stringify(payload),
         });
         expect(response.status).toBe(HttpCodes.NotFound);
@@ -44,7 +58,7 @@ describe("POST /api/v1/clients/{id}/favorite_products", () => {
       test("There is already a list for the fourth product", async () => {
         const response = await fetch(`${BaseUrl}/v1/clients/${clientId}/favorite_products`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: headersOptions(accessToken),
           body: JSON.stringify(payload),
         });
         expect(response.status).toBe(HttpCodes.Conflict);

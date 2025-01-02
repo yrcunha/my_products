@@ -1,16 +1,23 @@
 import {
   BaseUrl,
   clearTableInDatabase,
+  FirstProduct,
   insertClientForTesting,
   insertProductForTesting,
+  logIn,
+  ProductId,
   waitForAllServices,
 } from "../../../orchestrator";
 import { HttpCodes } from "../../../../src/shared/http/http";
 import { ErrorCodes } from "../../../../src/shared/errors/custom-errors";
 import { randomUUID } from "node:crypto";
-import data from "../../../../__infrastructure__/provisioning/development/product-server.json";
+import { TokenProps } from "../../../../src/features/models/user";
 
-const productId = data.product[0].id;
+let accessToken: TokenProps["access_token"];
+const headersOptions = (token: TokenProps["access_token"]) => ({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${token}`,
+});
 let clientId: string;
 
 beforeAll(async () => {
@@ -20,23 +27,28 @@ beforeAll(async () => {
     clearTableInDatabase("products"),
     clearTableInDatabase("favorite_products"),
   ]);
-  clientId = (await insertClientForTesting()).id;
-  await insertProductForTesting(clientId, data.product[0]);
+  const [client, token] = await Promise.all([insertClientForTesting(), logIn()]);
+  clientId = client.id;
+  accessToken = token.access_token;
+
+  await insertProductForTesting(clientId, FirstProduct);
 });
 
 describe("DELETE /api/v1/clients/{id}/favorite_products/{product_id}", () => {
-  describe("Anonymous user", () => {
+  describe("Authenticated user", () => {
     describe("Deleting product", () => {
       test("For the first time successfully", async () => {
-        const response = await fetch(`${BaseUrl}/v1/clients/${clientId}/favorite_products/${productId}`, {
+        const response = await fetch(`${BaseUrl}/v1/clients/${clientId}/favorite_products/${ProductId}`, {
           method: "DELETE",
+          headers: headersOptions(accessToken),
         });
         expect(response.status).toBe(HttpCodes.NotContent);
       });
 
       test("For the second time with a non-existent client", async () => {
-        const response = await fetch(`${BaseUrl}/v1/clients/${randomUUID()}/favorite_products/${productId}`, {
+        const response = await fetch(`${BaseUrl}/v1/clients/${randomUUID()}/favorite_products/${ProductId}`, {
           method: "DELETE",
+          headers: headersOptions(accessToken),
         });
         expect(response.status).toBe(HttpCodes.NotFound);
         const responseJson = await response.json();
@@ -46,6 +58,7 @@ describe("DELETE /api/v1/clients/{id}/favorite_products/{product_id}", () => {
       test("For the third time with a non-existent product", async () => {
         const response = await fetch(`${BaseUrl}/v1/clients/${clientId}/favorite_products/${randomUUID()}`, {
           method: "DELETE",
+          headers: headersOptions(accessToken),
         });
         expect(response.status).toBe(HttpCodes.NotFound);
         const responseJson = await response.json();

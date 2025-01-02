@@ -1,20 +1,15 @@
-import { BaseUrl, delay, waitForAllServices } from "../../../orchestrator";
+import { BaseUrl, delay, logIn, waitForAllServices } from "../../../orchestrator";
 import { HttpCodes } from "../../../../src/shared/http/http";
 import { faker } from "@faker-js/faker";
 import { ErrorCodes } from "../../../../src/shared/errors/custom-errors";
+import { TokenProps } from "../../../../src/features/models/user";
 
-let token: { access_token: string; refresh_token: string };
-const expireInForTestInMs = 1000;
+let token: TokenProps;
+const expireInForTestInMs = 2000;
 
 beforeAll(async () => {
   await waitForAllServices();
-
-  const response = await fetch(`${BaseUrl}/v1/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email: "labs@gmail.com", password: "labs123" }),
-  });
-  token = await response.json();
+  token = await logIn();
 });
 
 describe("POST /api/v1/refresh_token", () => {
