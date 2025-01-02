@@ -12,6 +12,7 @@ import logger from "@/shared/logger/logger";
 import { requestCircuitBreaker } from "@/features/providers/request";
 import { favoritesListRouter } from "@/api/v1/favorites-list.router";
 import { productReviewRouter } from "@/api/v1/product-review.router";
+import { sessionRouter } from "@/api/v1/session.router";
 
 (() => {
   loadEnv(process.env);
@@ -34,6 +35,7 @@ import { productReviewRouter } from "@/api/v1/product-review.router";
     .use(clientRouter())
     .use(favoritesListRouter())
     .use(productReviewRouter())
+    .use(sessionRouter())
     .all("*", methodNotAllowed)
     .use(errorHandler);
 
