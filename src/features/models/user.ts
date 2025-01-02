@@ -9,3 +9,8 @@ export type UserTokenProps = {
   user_id: string;
   token: string;
 };
+
+export type TokenProps = {
+  access_token: string;
+  refresh_token: string;
+};
