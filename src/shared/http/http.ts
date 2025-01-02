@@ -17,6 +17,7 @@ export enum HttpCodes {
 
 export const MapErrors = {
   [ErrorCodes.InvalidPayload.valueOf()]: HttpCodes.BadRequest,
+  [ErrorCodes.TokenExpired.valueOf()]: HttpCodes.Unauthorized,
   [ErrorCodes.Unauthorized.valueOf()]: HttpCodes.Unauthorized,
   [ErrorCodes.ActionNotAllowed.valueOf()]: HttpCodes.Forbidden,
   [ErrorCodes.ResourceNotFound.valueOf()]: HttpCodes.NotFound,

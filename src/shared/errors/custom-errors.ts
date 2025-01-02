@@ -11,6 +11,7 @@ export enum ErrorCodes {
   ProblemsOnTheCallServer = "ProblemsOnTheCallServer",
   InvalidCall = "InvalidCall",
   InvalidCallContract = "InvalidCallContract",
+  TokenExpired = "TokenExpired",
 }
 
 export type ValidationErrorDetails = {
