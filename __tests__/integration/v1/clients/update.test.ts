@@ -1,26 +1,40 @@
-import { BaseUrl, clearTableInDatabase, insertClientForTesting, waitForAllServices } from "../../../orchestrator";
+import {
+  BaseUrl,
+  clearTableInDatabase,
+  insertClientForTesting,
+  logIn,
+  waitForAllServices,
+} from "../../../orchestrator";
 import { HttpCodes } from "../../../../src/shared/http/http";
 import { randomUUID } from "node:crypto";
 import { ErrorCodes } from "../../../../src/shared/errors/custom-errors";
 import { faker } from "@faker-js/faker";
+import { TokenProps } from "../../../../src/features/models/user";
 
-let clientId: string;
+let accessToken: TokenProps["access_token"];
+const headersOptions = (token: TokenProps["access_token"]) => ({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${token}`,
+});
+let clientId: Record<string, unknown>;
 
 beforeAll(async () => {
   await waitForAllServices();
   await clearTableInDatabase("clients");
-  clientId = (await insertClientForTesting()).id;
+  const [client, token] = await Promise.all([insertClientForTesting(), logIn()]);
+  clientId = client.id;
+  accessToken = token.access_token;
 });
 
 describe("PUT /api/v1/clients/{id}", () => {
-  describe("Anonymous user", () => {
+  describe("Authenticated user", () => {
     describe("Updating client", () => {
       const payload = { name: faker.person.fullName(), email: faker.internet.email() };
 
       test("For the first time successfully", async () => {
         const response = await fetch(`${BaseUrl}/v1/clients/${clientId}`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: headersOptions(accessToken),
           body: JSON.stringify(payload),
         });
         expect(response.status).toBe(HttpCodes.NotContent);
@@ -29,7 +43,7 @@ describe("PUT /api/v1/clients/{id}", () => {
       test("For the second time with a non-existent client", async () => {
         const response = await fetch(`${BaseUrl}/v1/clients/${randomUUID()}`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: headersOptions(accessToken),
           body: JSON.stringify(payload),
         });
         expect(response.status).toBe(HttpCodes.NotFound);
@@ -40,7 +54,7 @@ describe("PUT /api/v1/clients/{id}", () => {
       test("For the third time with invalid payload", async () => {
         const response = await fetch(`${BaseUrl}/v1/clients/${clientId}`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: headersOptions(accessToken),
           body: JSON.stringify({ email: faker.person.fullName() }),
         });
         expect(response.status).toBe(HttpCodes.BadRequest);

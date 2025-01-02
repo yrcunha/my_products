@@ -41,8 +41,8 @@ export function loadEnv(env: NodeJS.ProcessEnv) {
     process.exit(1);
   }
   if (process.env.NODE_ENV === "test") {
-    model.data.JWT_EXPIRATION = "1s";
-    model.data.JWT_EXPIRATION_TO_REFRESH = "1s";
+    model.data.JWT_EXPIRATION = "2s";
+    model.data.JWT_EXPIRATION_TO_REFRESH = "2s";
   }
   process.env = model.data;
 }

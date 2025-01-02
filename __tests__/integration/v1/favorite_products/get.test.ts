@@ -1,16 +1,22 @@
 import {
   BaseUrl,
   clearTableInDatabase,
+  FirstProduct,
   insertClientForTesting,
   insertProductForTesting,
+  logIn,
+  ProductId,
   waitForAllServices,
 } from "../../../orchestrator";
 import { HttpCodes } from "../../../../src/shared/http/http";
 import { ErrorCodes } from "../../../../src/shared/errors/custom-errors";
 import { randomUUID } from "node:crypto";
-import data from "../../../../__infrastructure__/provisioning/development/product-server.json";
+import { TokenProps } from "../../../../src/features/models/user";
 
-const productId = data.product[0].id;
+let accessToken: TokenProps["access_token"];
+const headersOptions = (token: TokenProps["access_token"]) => ({
+  Authorization: `Bearer ${token}`,
+});
 let clientId: string;
 
 beforeAll(async () => {
@@ -20,44 +26,53 @@ beforeAll(async () => {
     clearTableInDatabase("products"),
     clearTableInDatabase("favorite_products"),
   ]);
-  clientId = (await insertClientForTesting()).id;
-  await insertProductForTesting(clientId, data.product[0]);
+  const [client, token] = await Promise.all([insertClientForTesting(), logIn()]);
+  clientId = client.id;
+  accessToken = token.access_token;
+
+  await insertProductForTesting(clientId, FirstProduct);
 });
 
 describe("GET /api/v1/clients/{id}/favorite_products/{product_id}", () => {
-  describe("Anonymous user", () => {
+  describe("Authenticated user", () => {
     describe("Retrieving product", () => {
       test("For the first time successfully", async () => {
-        const response = await fetch(`${BaseUrl}/v1/clients/${clientId}/favorite_products/${productId}`);
+        const response = await fetch(`${BaseUrl}/v1/clients/${clientId}/favorite_products/${ProductId}`, {
+          headers: headersOptions(accessToken),
+        });
         expect(response.status).toBe(HttpCodes.OK);
         const responseJson = await response.json();
         const expected = {
-          id: data.product[0].id,
-          price: data.product[0].price,
-          title: data.product[0].title,
-          image: data.product[0].image,
+          id: FirstProduct.id,
+          price: FirstProduct.price,
+          title: FirstProduct.title,
+          image: FirstProduct.image,
           reviews: [],
         };
         expect(responseJson).toEqual(expected);
       });
 
       test("For the second time with a non-existent client", async () => {
-        const response = await fetch(`${BaseUrl}/v1/clients/${randomUUID()}/favorite_products/${productId}`);
+        const response = await fetch(`${BaseUrl}/v1/clients/${randomUUID()}/favorite_products/${ProductId}`, {
+          headers: headersOptions(accessToken),
+        });
         expect(response.status).toBe(HttpCodes.NotFound);
         const responseJson = await response.json();
         expect(responseJson.name).toEqual(ErrorCodes.ResourceNotFound);
       });
 
       test("For the third time, retrieve a favorite product list", async () => {
-        const response = await fetch(`${BaseUrl}/v1/clients/${clientId}/favorite_products`);
+        const response = await fetch(`${BaseUrl}/v1/clients/${clientId}/favorite_products`, {
+          headers: headersOptions(accessToken),
+        });
         expect(response.status).toBe(HttpCodes.OK);
         const responseJson = await response.json();
         expect(Array.isArray(responseJson.data)).toBeTruthy();
         const expected = {
-          id: data.product[0].id,
-          price: data.product[0].price,
-          title: data.product[0].title,
-          image: data.product[0].image,
+          id: FirstProduct.id,
+          price: FirstProduct.price,
+          title: FirstProduct.title,
+          image: FirstProduct.image,
         };
         expect(responseJson).toEqual({
           page: 1,

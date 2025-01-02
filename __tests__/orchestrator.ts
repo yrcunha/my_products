@@ -5,8 +5,11 @@ import { ulid } from "ulid";
 import { ProductProps } from "../src/features/models/products";
 import { ClientProps } from "../src/features/models/client";
 import { ReviewProps } from "../src/features/models/review";
+import data from "../__infrastructure__/provisioning/development/product-server.json";
 
 export const BaseUrl = "http://localhost:3000/api";
+export const ProductId = data.product[0].id;
+export const FirstProduct = data.product[0];
 
 export function waitForAllServices() {
   return retry(
@@ -17,6 +20,10 @@ export function waitForAllServices() {
     },
     { retries: 100, maxTimeout: 1000 },
   );
+}
+
+export async function clearTablesInDatabase(tableName: string) {
+  await Promise.all([await query(`TRUNCATE TABLE ${tableName} RESTART IDENTITY CASCADE;`)]);
 }
 
 export async function clearTableInDatabase(tableName: string) {
@@ -56,4 +63,13 @@ export async function insertProductReviewForTesting(productId: ProductProps["id"
 
 export async function delay(ms: number) {
   await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export async function logIn() {
+  const response = await fetch(`${BaseUrl}/v1/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: "labs@gmail.com", password: "labs123" }),
+  });
+  return await response.json();
 }
