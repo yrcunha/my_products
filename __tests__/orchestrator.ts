@@ -53,3 +53,7 @@ export async function insertProductReviewForTesting(productId: ProductProps["id"
     [productId, data.score, data.message, data.reviewer],
   );
 }
+
+export async function delay(ms: number) {
+  await new Promise((resolve) => setTimeout(resolve, ms));
+}

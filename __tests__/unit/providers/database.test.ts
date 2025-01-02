@@ -1,4 +1,5 @@
 import { databaseCircuitBreaker, query } from "../../../src/features/providers/database";
+import { delay } from "../../orchestrator";
 
 describe("Circuit breaker for database", () => {
   const invalidCommand = "SELECT * FROM non_existing_table";
@@ -19,7 +20,7 @@ describe("Circuit breaker for database", () => {
 
   test("Circuit breaker half open after waiting for reset timeout", async () => {
     const resetTimeout = Number(process.env.CIRCUIT_BREAKER_RESET_TIMEOUT_FROM_DATABASE);
-    await new Promise((resolve) => setTimeout(resolve, resetTimeout));
+    await delay(resetTimeout);
     expect(databaseCircuitBreaker.halfOpen).toBeTruthy();
   });
 
