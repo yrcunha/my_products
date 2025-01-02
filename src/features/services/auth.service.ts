@@ -11,7 +11,10 @@ export async function createRefreshToken(userId: UserProps["id"]) {
   const token = jwt.sign({ user: userId }, process.env.JWT_REFRESH_SECRET, {
     expiresIn: process.env.JWT_EXPIRATION_TO_REFRESH,
   });
-  await query("INSERT INTO user_tokens(user_id, token) VALUES ($1, $2);", [userId, token]);
+  await query("INSERT INTO user_tokens(user_id, token) VALUES ($1, $2) ON CONFLICT (user_id, token) DO NOTHING;", [
+    userId,
+    token,
+  ]);
   return token;
 }
 
