@@ -1,8 +1,14 @@
+export enum Role {
+  admin = "admin",
+  client = "client",
+}
+
 export type UserProps = {
   id: string;
   name: string;
   email: string;
   password: string;
+  role: Role;
 };
 
 export type UserTokenProps = {

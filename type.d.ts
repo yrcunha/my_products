@@ -27,7 +27,7 @@ declare namespace NodeJS {
 
 declare namespace Express {
   interface Request {
-    user?: string;
-    token?: string;
+    user: string;
+    token: string;
   }
 }

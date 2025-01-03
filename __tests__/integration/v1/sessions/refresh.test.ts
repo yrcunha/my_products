@@ -1,4 +1,4 @@
-import { BaseUrl, delay, logIn, waitForAllServices } from "../../../orchestrator";
+import { AdminUser, BaseUrl, delay, logIn, waitForAllServices } from "../../../orchestrator";
 import { HttpCodes } from "../../../../src/shared/http/http";
 import { faker } from "@faker-js/faker";
 import { ErrorCodes } from "../../../../src/shared/errors/custom-errors";
@@ -9,7 +9,7 @@ const expireInForTestInMs = 2000;
 
 beforeAll(async () => {
   await waitForAllServices();
-  token = await logIn();
+  token = await logIn(AdminUser);
 });
 
 describe("POST /api/v1/refresh_token", () => {

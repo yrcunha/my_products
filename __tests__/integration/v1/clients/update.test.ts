@@ -1,12 +1,13 @@
 import {
+  AdminUser,
   BaseUrl,
   clearTableInDatabase,
+  ClientUser,
   insertClientForTesting,
   logIn,
   waitForAllServices,
 } from "../../../orchestrator";
 import { HttpCodes } from "../../../../src/shared/http/http";
-import { randomUUID } from "node:crypto";
 import { ErrorCodes } from "../../../../src/shared/errors/custom-errors";
 import { faker } from "@faker-js/faker";
 import { TokenProps } from "../../../../src/features/models/user";
@@ -21,7 +22,7 @@ let clientId: Record<string, unknown>;
 beforeAll(async () => {
   await waitForAllServices();
   await clearTableInDatabase("clients");
-  const [client, token] = await Promise.all([insertClientForTesting(), logIn()]);
+  const [client, token] = await Promise.all([insertClientForTesting(AdminUser.id), logIn(AdminUser)]);
   clientId = client.id;
   accessToken = token.access_token;
 });
@@ -41,9 +42,10 @@ describe("PUT /api/v1/clients/{id}", () => {
       });
 
       test("For the second time with a non-existent client", async () => {
-        const response = await fetch(`${BaseUrl}/v1/clients/${randomUUID()}`, {
+        const token = await logIn(ClientUser);
+        const response = await fetch(`${BaseUrl}/v1/clients/${ClientUser.id}`, {
           method: "PUT",
-          headers: headersOptions(accessToken),
+          headers: headersOptions(token.access_token),
           body: JSON.stringify(payload),
         });
         expect(response.status).toBe(HttpCodes.NotFound);
@@ -60,6 +62,18 @@ describe("PUT /api/v1/clients/{id}", () => {
         expect(response.status).toBe(HttpCodes.BadRequest);
         const responseJson = await response.json();
         expect(responseJson.name).toEqual(ErrorCodes.InvalidPayload);
+      });
+
+      test("For the fourth time with a user without permission", async () => {
+        const token = await logIn(ClientUser);
+        const response = await fetch(`${BaseUrl}/v1/clients/${clientId}`, {
+          method: "PUT",
+          headers: headersOptions(token.access_token),
+          body: JSON.stringify({ email: faker.person.fullName() }),
+        });
+        expect(response.status).toBe(HttpCodes.Forbidden);
+        const responseJson = await response.json();
+        expect(responseJson.name).toEqual(ErrorCodes.ActionNotAllowed);
       });
     });
   });

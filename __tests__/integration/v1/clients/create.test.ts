@@ -1,4 +1,4 @@
-import { BaseUrl, clearTableInDatabase, logIn, waitForAllServices } from "../../../orchestrator";
+import { AdminUser, BaseUrl, clearTableInDatabase, logIn, waitForAllServices } from "../../../orchestrator";
 import { HttpCodes } from "../../../../src/shared/http/http";
 import { faker } from "@faker-js/faker";
 import { ErrorCodes } from "../../../../src/shared/errors/custom-errors";
@@ -13,7 +13,7 @@ const headersOptions = (token: TokenProps["access_token"]) => ({
 beforeAll(async () => {
   await waitForAllServices();
   await clearTableInDatabase("clients");
-  token = await logIn();
+  token = await logIn(AdminUser);
 });
 
 describe("Authenticated user", () => {

@@ -3,6 +3,10 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { destroyRefreshToken } from "@/features/services/auth.service";
 import { TokenExpiredError } from "@/shared/errors/token-expired.error";
 import { UnauthorizedError } from "@/shared/errors/unauthorized.error";
+import { Role } from "@/features/models/user";
+import { getUserById } from "@/features/services/user.service";
+import { ActionNotAllowedError } from "@/shared/errors/action-not-allowed.error";
+import { CorruptUserError } from "@/shared/errors/corrupt-user.error";
 
 export async function isAuthenticated(req: Request, _res: Response, next: NextFunction) {
   const authorization = req.headers?.authorization;
@@ -21,4 +25,31 @@ export async function isAuthenticated(req: Request, _res: Response, next: NextFu
     }
     throw new UnauthorizedError();
   }
+}
+
+export async function isAuthorizedAdminUser(req: Request, _res: Response, next: NextFunction) {
+  const user = await getUserById(req.user);
+  if (!user) throw new CorruptUserError();
+  if (user.role !== Role.admin) throw new ActionNotAllowedError();
+  next();
+}
+
+export async function isAuthorizedAdminUserOrSelf(req: Request, _res: Response, next: NextFunction) {
+  const user = await getUserById(req.user);
+  if (!user) throw new CorruptUserError();
+  if (user.role !== Role.admin && user.id !== req.params.id) throw new ActionNotAllowedError("");
+  next();
+}
+
+export async function isHimself(req: Request, _res: Response, next: NextFunction) {
+  const user = await getUserById(req.user);
+  if (!user) throw new CorruptUserError();
+  if (user.id !== req.params.id) throw new ActionNotAllowedError();
+  next();
+}
+
+export async function isValidUser(req: Request, _res: Response, next: NextFunction) {
+  const user = await getUserById(req.user);
+  if (!user) throw new CorruptUserError();
+  next();
 }
