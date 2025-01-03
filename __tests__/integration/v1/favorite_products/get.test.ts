@@ -1,6 +1,8 @@
 import {
+  AdminUser,
   BaseUrl,
   clearTableInDatabase,
+  ClientUser,
   FirstProduct,
   insertClientForTesting,
   insertProductForTesting,
@@ -10,7 +12,6 @@ import {
 } from "../../../orchestrator";
 import { HttpCodes } from "../../../../src/shared/http/http";
 import { ErrorCodes } from "../../../../src/shared/errors/custom-errors";
-import { randomUUID } from "node:crypto";
 import { TokenProps } from "../../../../src/features/models/user";
 
 let accessToken: TokenProps["access_token"];
@@ -26,7 +27,7 @@ beforeAll(async () => {
     clearTableInDatabase("products"),
     clearTableInDatabase("favorite_products"),
   ]);
-  const [client, token] = await Promise.all([insertClientForTesting(), logIn()]);
+  const [client, token] = await Promise.all([insertClientForTesting(AdminUser.id), logIn(AdminUser)]);
   clientId = client.id;
   accessToken = token.access_token;
 
@@ -53,8 +54,9 @@ describe("GET /api/v1/clients/{id}/favorite_products/{product_id}", () => {
       });
 
       test("For the second time with a non-existent client", async () => {
-        const response = await fetch(`${BaseUrl}/v1/clients/${randomUUID()}/favorite_products/${ProductId}`, {
-          headers: headersOptions(accessToken),
+        const token = await logIn(ClientUser);
+        const response = await fetch(`${BaseUrl}/v1/clients/${ClientUser.id}/favorite_products/${ProductId}`, {
+          headers: headersOptions(token.access_token),
         });
         expect(response.status).toBe(HttpCodes.NotFound);
         const responseJson = await response.json();

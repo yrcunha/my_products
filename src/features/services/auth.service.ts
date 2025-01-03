@@ -25,12 +25,6 @@ export async function checkRefreshToken(token: UserTokenProps["token"]) {
 
 export async function destroyRefreshToken(token: UserTokenProps["token"]) {
   const result = await query("DELETE FROM user_tokens WHERE token = $1;", [token]);
-  // TODO, obter user do token
-  if (result.rows.length <= 0) logger.warn("When searching the database, the Update Token was not found.");
+  if (result.rows.length <= 0) logger.warn(`When searching the database, the Update Token was not found.`);
   return;
-}
-
-export async function getUserByEmail(email: UserProps["email"]) {
-  const result = await query("SELECT users.id, users.email, users.password FROM users WHERE email = $1;", [email]);
-  return result.rows.length ? result.rows[0] : null;
 }

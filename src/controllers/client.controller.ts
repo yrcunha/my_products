@@ -1,5 +1,4 @@
 import { ClientModel } from "@/features/models/client";
-import { ulid } from "ulid";
 import { Request, Response } from "express";
 import { HttpCodes } from "@/shared/http/http";
 import {
@@ -15,7 +14,7 @@ import { mapZodErrorDetails } from "@/shared/utils/map-zod-error-details";
 import { PaginationModel } from "@/features/models/pagination";
 
 export async function create(req: Request, res: Response) {
-  const model = ClientModel.safeParse({ id: ulid(), ...req.body });
+  const model = ClientModel.safeParse({ id: req.user, ...req.body });
   if (!model.success) throw new InvalidPayloadError(mapZodErrorDetails(model.error?.issues));
   const insertId = await createClient(model.data);
   res.status(HttpCodes.Created).json({ insert_id: insertId });

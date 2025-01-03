@@ -1,6 +1,8 @@
 import {
+  AdminUser,
   BaseUrl,
   clearTableInDatabase,
+  ClientUser,
   insertClientForTesting,
   logIn,
   waitForAllServices,
@@ -20,7 +22,7 @@ let clientId: string;
 beforeAll(async () => {
   await waitForAllServices();
   await clearTableInDatabase("clients");
-  const [client, token] = await Promise.all([insertClientForTesting(), logIn()]);
+  const [client, token] = await Promise.all([insertClientForTesting(AdminUser.id), logIn(AdminUser)]);
   clientId = client.id;
   accessToken = token.access_token;
 });
@@ -44,6 +46,17 @@ describe("DELETE /api/v1/clients/{id}", () => {
         expect(response.status).toBe(HttpCodes.NotFound);
         const responseJson = await response.json();
         expect(responseJson.name).toEqual(ErrorCodes.ResourceNotFound);
+      });
+
+      test("For the third time with a user without permission", async () => {
+        const token = await logIn(ClientUser);
+        const response = await fetch(`${BaseUrl}/v1/clients/${randomUUID()}`, {
+          method: "DELETE",
+          headers: headersOptions(token.access_token),
+        });
+        expect(response.status).toBe(HttpCodes.Forbidden);
+        const responseJson = await response.json();
+        expect(responseJson.name).toEqual(ErrorCodes.ActionNotAllowed);
       });
     });
   });
