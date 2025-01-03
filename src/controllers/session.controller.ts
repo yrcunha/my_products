@@ -6,11 +6,11 @@ import {
   createRefreshToken,
   createToken,
   destroyRefreshToken,
-  getUserByEmail,
 } from "@/features/services/auth.service";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { TokenExpiredError } from "@/shared/errors/token-expired.error";
 import { UnauthorizedError } from "@/shared/errors/unauthorized.error";
+import { getUserByEmail } from "@/features/services/user.service";
 
 export async function signInUser({ body: { email, password } }: Request, res: Response) {
   const user = await getUserByEmail(email);
@@ -19,7 +19,7 @@ export async function signInUser({ body: { email, password } }: Request, res: Re
   const passwordValid = await bcrypt.compare(password, user.password);
   if (!passwordValid) throw new UnauthorizedError("Invalid credentials!");
 
-  const accessToken = createToken(user);
+  const accessToken = createToken(user.id);
   const refreshToken = await createRefreshToken(user.id);
   res.status(HttpCodes.OK).json({ access_token: accessToken, refresh_token: refreshToken });
 }

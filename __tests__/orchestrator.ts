@@ -1,7 +1,6 @@
 import retry from "async-retry";
 import { query } from "../src/features/providers/database";
 import { faker } from "@faker-js/faker";
-import { ulid } from "ulid";
 import { ProductProps } from "../src/features/models/products";
 import { ClientProps } from "../src/features/models/client";
 import { ReviewProps } from "../src/features/models/review";
@@ -22,16 +21,12 @@ export function waitForAllServices() {
   );
 }
 
-export async function clearTablesInDatabase(tableName: string) {
-  await Promise.all([await query(`TRUNCATE TABLE ${tableName} RESTART IDENTITY CASCADE;`)]);
-}
-
 export async function clearTableInDatabase(tableName: string) {
   await query(`TRUNCATE TABLE ${tableName} RESTART IDENTITY CASCADE;`);
 }
 
-export async function insertClientForTesting() {
-  const props = { id: ulid(), name: faker.person.fullName(), email: faker.internet.email() };
+export async function insertClientForTesting(id: ClientProps["id"]) {
+  const props = { id, name: faker.person.fullName(), email: faker.internet.email() };
   const result = await query("INSERT INTO clients (id, name, email) VALUES ($1, $2, $3) RETURNING id, email, name;", [
     props.id,
     props.name,
@@ -65,11 +60,14 @@ export async function delay(ms: number) {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export async function logIn() {
+export const AdminUser = { id: "01JGJA0S8REPJRSHACR2JBS527", email: "labs@gmail.com", password: "labs123" };
+export const ClientUser = { id: "01JGJA6QYNHD5B0Y3JA91X9EAQ", email: "sbal@gmail.com", password: "labs123" };
+
+export async function logIn(user: { email: string; password: string }) {
   const response = await fetch(`${BaseUrl}/v1/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email: "labs@gmail.com", password: "labs123" }),
+    body: JSON.stringify({ email: user.email, password: user.password }),
   });
   return await response.json();
 }

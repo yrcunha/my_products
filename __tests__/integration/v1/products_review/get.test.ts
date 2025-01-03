@@ -1,4 +1,5 @@
 import {
+  AdminUser,
   BaseUrl,
   clearTableInDatabase,
   insertClientForTesting,
@@ -26,7 +27,7 @@ beforeAll(async () => {
     clearTableInDatabase("favorite_products"),
     clearTableInDatabase("products_review"),
   ]);
-  clientId = (await insertClientForTesting()).id;
+  clientId = (await insertClientForTesting(AdminUser.id)).id;
   await insertProductForTesting(clientId, data.product[0]);
   await insertProductReviewForTesting(productId, review);
 });

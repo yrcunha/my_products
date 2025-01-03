@@ -1,4 +1,5 @@
 import {
+  AdminUser,
   BaseUrl,
   clearTableInDatabase,
   insertClientForTesting,
@@ -27,9 +28,9 @@ beforeAll(async () => {
     clearTableInDatabase("favorite_products"),
     clearTableInDatabase("products_review"),
   ]);
-  clientId = (await insertClientForTesting()).id;
+  clientId = (await insertClientForTesting(AdminUser.id)).id;
   await insertProductForTesting(clientId, data.product[0]);
-  token = await logIn();
+  token = await logIn(AdminUser);
 });
 
 describe("POST /api/v1/products/{id}/reviews", () => {

@@ -89,7 +89,7 @@
       "npx prettier --check",
       "eslint"
     ],
-    "*.{json,css,html}": [
+    "*.{css,html}": [
       "npx prettier --check"
     ]
   },

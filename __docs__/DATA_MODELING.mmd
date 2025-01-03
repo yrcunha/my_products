@@ -1,0 +1,42 @@
+erDiagram
+  USERS {
+    char id PK
+    varchar role
+  }
+
+  USER_TOKENS {
+    char user_id FK
+    text token PK
+  }
+
+  CLIENTS {
+    char id PK
+  }
+
+  FAVORITE_PRODUCTS {
+    char client_id FK
+    text product_id FK
+    boolean status
+  }
+
+  PRODUCTS {
+    text id PK
+    enum state "available, unavailable"
+  }
+
+  PRODUCTS_REVIEW {
+    serial id PK
+    text product_id FK
+  }
+
+  ROLES {
+    serial id PK
+    varchar name
+  }
+
+  USERS ||--o| USER_TOKENS: has
+  USERS ||--o| CLIENTS: owns
+  ROLES ||--o| USERS: has
+  CLIENTS ||--o| FAVORITE_PRODUCTS: has
+  PRODUCTS ||--o| FAVORITE_PRODUCTS: has
+  PRODUCTS ||--o| PRODUCTS_REVIEW: has

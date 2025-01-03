@@ -1,0 +1,482 @@
+{
+  "info": {
+    "_postman_id": "fb6a1b78-467f-4408-83bf-18495e8eee06",
+    "name": "My Products",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "10032113"
+  },
+  "item": [
+    {
+      "name": "Clients",
+      "item": [
+        {
+          "name": "Create Client",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Yuri Rodrigues\",\n    \"email\": \"yrcunha@gmail.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url}}{{path_client}}",
+              "host": ["{{url}}{{path_client}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Clients",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url}}{{path_client}}",
+              "host": ["{{url}}{{path_client}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Client By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}{{path_client}}/:id",
+              "host": ["{{url}}{{path_client}}"],
+              "path": [":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "01JGM94D8GY4F4PKQC2QAK3G84"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Client",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Yuri Rodrigues\",\n    \"email\": \"yrcunha@gmail.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url}}{{path_client}}/:id",
+              "host": ["{{url}}{{path_client}}"],
+              "path": [":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "01JGEX6FQPGW5HHVB2JW7GTXAG"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Client",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{url}}{{path_client}}/:id",
+              "host": ["{{url}}{{path_client}}"],
+              "path": [":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "01JGEX6FQPGW5HHVB2JW7GTXAG"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{token}}",
+            "type": "string"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "exec": [""]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "exec": [""]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Favorite Products",
+      "item": [
+        {
+          "name": "Add Product in List",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"product_id\": \"01JGHESJEKBX468E93W00NRD9M\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url}}{{path_client}}/:id/favorite_products",
+              "host": ["{{url}}{{path_client}}"],
+              "path": [":id", "favorite_products"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "01JGM48FGEJHCWDB77T58B9JJE"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Product",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{url}}{{path_client}}/:id/favorite_products/:product_id",
+              "host": ["{{url}}{{path_client}}"],
+              "path": [":id", "favorite_products", ":product_id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "01JGEWEVVEC1CXSGHKQMTT3K8D"
+                },
+                {
+                  "key": "product_id",
+                  "value": "01JGEWEVVEC1CXSGHKQMTT3K8D"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}{{path_client}}/:id/favorite_products",
+              "host": ["{{url}}{{path_client}}"],
+              "path": [":id", "favorite_products"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "01JGHZ18T2WFR53XB7SF517239"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}{{path_client}}/:id/favorite_products/:product_id",
+              "host": ["{{url}}{{path_client}}"],
+              "path": [":id", "favorite_products", ":product_id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "01JGHZ18T2WFR53XB7SF517239"
+                },
+                {
+                  "key": "product_id",
+                  "value": "01JGHESJEKBX468E93W00NRD9M"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{token}}",
+            "type": "string"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "exec": [""]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "exec": [""]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products Review",
+      "item": [
+        {
+          "name": "Add Review",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiMDFKR0pBMFM4UkVQSlJTSEFDUjJKQlM1MjciLCJlbWFpbCI6ImxhYnNAZ21haWwuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkWncwT2MvZjhoZWdWLmYybU1UdlJQLmxCYkdlNGtYRVNvL2JGOGN4WWw0WHVkamdnMnk3SmEifSwiaWF0IjoxNzM1ODU3MjY4LCJleHAiOjE3MzU4NTczODh9.v-Ee_7ewzDyXIFD5JULnlpTgCMLhh0u40HtCYQALldc",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"message\": \"Gostei do produto\",\n    \"score\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url}}{{path_products}}/:id/reviews",
+              "host": ["{{url}}{{path_products}}"],
+              "path": [":id", "reviews"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "01JGHESJEKBX468E93W00NRD9M"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}{{path_products}}/:id/reviews",
+              "host": ["{{url}}{{path_products}}"],
+              "path": [":id", "reviews"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "01JGHESJEKBX468E93W00NRD9M"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{token}}",
+            "type": "string"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "exec": [""]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "exec": [""]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sessions",
+      "item": [
+        {
+          "name": "Log In",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var response = pm.response.json();",
+                  "    if (response.access_token && response.refresh_token) {",
+                  "        pm.collectionVariables.set(\"access_token\", response.access_token);",
+                  "        pm.collectionVariables.set(\"refresh_token\", response.refresh_token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"sbal@gmail.com\",\n    \"password\": \"labs123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url}}/api/v1/login",
+              "host": ["{{url}}"],
+              "path": ["api", "v1", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh ToKen",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refresh_token\": \"{{refresh_token}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url}}/api/v1/refresh_token",
+              "host": ["{{url}}"],
+              "path": ["api", "v1", "refresh_token"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "path_client",
+      "value": "/api/v1/clients",
+      "type": "string"
+    },
+    {
+      "key": "path_products",
+      "value": "/api/v1/products",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

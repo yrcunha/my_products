@@ -20,6 +20,7 @@ export const MapErrors = {
   [ErrorCodes.TokenExpired.valueOf()]: HttpCodes.Unauthorized,
   [ErrorCodes.Unauthorized.valueOf()]: HttpCodes.Unauthorized,
   [ErrorCodes.ActionNotAllowed.valueOf()]: HttpCodes.Forbidden,
+  [ErrorCodes.CorruptUser.valueOf()]: HttpCodes.Forbidden,
   [ErrorCodes.ResourceNotFound.valueOf()]: HttpCodes.NotFound,
   [ErrorCodes.MethodNotAllowed.valueOf()]: HttpCodes.MethodNotAllowed,
   [ErrorCodes.ResourceAlreadyExists.valueOf()]: HttpCodes.Conflict,

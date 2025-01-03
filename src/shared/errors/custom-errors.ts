@@ -7,6 +7,7 @@ export enum ErrorCodes {
   MethodNotAllowed = "MethodNotAllowed",
   Unauthorized = "Unauthorized",
   ActionNotAllowed = "ActionNotAllowed",
+  CorruptUser = "CorruptUser",
   InvalidDatabaseTransactionData = "InvalidDatabaseTransactionData",
   ProblemsOnTheCallServer = "ProblemsOnTheCallServer",
   InvalidCall = "InvalidCall",
